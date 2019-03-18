@@ -1,15 +1,20 @@
+import java.util.Random;
+
 /**
  * This class implements the Door component of the sushi bar assignment
  * The Door corresponds to the Producer in the producer/consumer problem
  */
 public class Door implements Runnable {
 
+    private WaitingArea waitingArea;
+
     /**
      * Creates a new Door. Make sure to save the
      * @param waitingArea   The customer queue waiting for a seat
      */
     public Door(WaitingArea waitingArea) {
-        // TODO Implement required functionality
+        this.waitingArea = waitingArea;
+        waitingArea.door = this;
     }
 
     /**
@@ -18,7 +23,18 @@ public class Door implements Runnable {
      */
     @Override
     public void run() {
-        // TODO Implement required functionality
+        int c = 0;
+        Random random = new Random();
+        while(SushiBar.isOpen){
+            while(c > 0){c--;}
+
+            Customer customer = new Customer();
+
+            waitingArea.enter(customer);
+
+            c = random.nextInt(SushiBar.doorWait);
+        }
+        SushiBar.write("***** DOOR CLOSED *****");
     }
 
     // Add more methods as you see fit

@@ -1,8 +1,12 @@
+import java.util.Random;
+
 /**
  * This class implements the consumer part of the producer/consumer problem.
  * One waitress instance corresponds to one consumer.
  */
 public class Waitress implements Runnable {
+
+    private WaitingArea waitingArea;
 
     /**
      * Creates a new waitress. Make sure to save the parameter in the class
@@ -10,7 +14,7 @@ public class Waitress implements Runnable {
      * @param waitingArea The waiting area for customers
      */
     Waitress(WaitingArea waitingArea) {
-        // TODO Implement required functionality
+        waitingArea = waitingArea;
     }
 
     /**
@@ -19,7 +23,16 @@ public class Waitress implements Runnable {
      */
     @Override
     public void run() {
-        // TODO Implement required functionality
+        Random rnd = new Random();
+        while(SushiBar.isOpen || !waitingArea.buffer.isEmpty()){
+
+            Customer customer = waitingArea.next();
+            SushiBar.write(SushiBar.genStr(Thread.currentThread().getName(), customer.getCustomerID(), "fetched"));
+
+            int delay = rnd.nextInt(SushiBar.waitressWait);
+            while(delay > 0){ delay--;}
+            customer.order();
+        }
     }
 
 

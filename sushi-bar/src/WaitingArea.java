@@ -1,8 +1,13 @@
+import java.util.ArrayList;
 
 /**
  * This class implements a waiting area used as the bounded buffer, in the producer/consumer problem.
  */
 public class WaitingArea {
+
+
+    public CustomerBuffer buffer;
+    public Door door;
 
     /**
      * Creates a new waiting area.
@@ -10,7 +15,7 @@ public class WaitingArea {
      * @param size The maximum number of Customers that can be waiting.
      */
     public WaitingArea(int size) {
-        // TODO Implement required functionality
+        buffer = new CustomerBuffer(size);
     }
 
     /**
@@ -19,14 +24,32 @@ public class WaitingArea {
      * @param customer A customer created by Door, trying to enter the waiting area
      */
     public synchronized void enter(Customer customer) {
-        // TODO Implement required functionality
+        synchronized (door){
+            while(buffer.isFull()){
+                try {
+                    door.wait();
+                } catch (InterruptedException e) { }
+            }
+            buffer.put(customer);
+            notifyAll();
+        }
     }
 
     /**
      * @return The customer that is first in line.
      */
     public synchronized Customer next() {
-        // TODO Implement required functionality
+        synchronized (this){
+            while(buffer.isEmpty()){
+                try {
+                    wait();
+                } catch (InterruptedException e) { }
+            }
+
+            Customer customer = buffer.pop();
+            door.notify();
+            return customer;
+        }
     }
 
     // Add more methods as you see fit

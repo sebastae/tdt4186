@@ -36,7 +36,20 @@ public class SushiBar {
         servedOrders = new SynchronizedInteger(0);
         takeawayOrders = new SynchronizedInteger(0);
 
-        // TODO initialize the bar and start the different threads
+        Clock clock = new Clock(duration);
+
+
+        WaitingArea waitingArea = new WaitingArea(SushiBar.waitingAreaCapacity);
+        Door door = new Door(waitingArea);
+        Waitress[] waitresses = new Waitress[SushiBar.waitressCount];
+
+        door.run();
+
+        for(int i = 0; i < waitressCount; i++){
+            waitresses[i] = new Waitress(waitingArea);
+            waitresses[i].run();
+        }
+
     }
 
     //Writes actions in the log file and console
@@ -52,4 +65,9 @@ public class SushiBar {
             e.printStackTrace();
         }
     }
+
+    public static String genStr(String threadName, int customerID, String action){
+        return String.format("%s: Customer #%d is now %s", threadName, customerID, action);
+    }
+
 }
