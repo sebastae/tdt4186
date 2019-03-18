@@ -24,10 +24,10 @@ public class WaitingArea {
      * @param customer A customer created by Door, trying to enter the waiting area
      */
     public synchronized void enter(Customer customer) {
-        synchronized (door){
+        synchronized (this){
             while(buffer.isFull()){
                 try {
-                    door.wait();
+                    wait();
                 } catch (InterruptedException e) { }
             }
             buffer.put(customer);
@@ -47,7 +47,8 @@ public class WaitingArea {
             }
 
             Customer customer = buffer.pop();
-            door.notify();
+
+            notifyAll();
             return customer;
         }
     }

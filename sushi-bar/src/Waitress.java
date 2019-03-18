@@ -14,7 +14,8 @@ public class Waitress implements Runnable {
      * @param waitingArea The waiting area for customers
      */
     Waitress(WaitingArea waitingArea) {
-        waitingArea = waitingArea;
+        this.waitingArea = waitingArea;
+        SushiBar.write(Thread.currentThread().getName() + ": Waitress created");
     }
 
     /**
@@ -33,7 +34,11 @@ public class Waitress implements Runnable {
             while(delay > 0){ delay--;}
             customer.order();
         }
-    }
+        if(SushiBar.customerCounter.get() == SushiBar.customersLeft.get()){
+            SushiBar.write("***** NO MORE CUSTOMERS - THE SHOP IS CLOSED NOW. *****");
+            SushiBar.printStats();
+        }
+}
 
 
 }

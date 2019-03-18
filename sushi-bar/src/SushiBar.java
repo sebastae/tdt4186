@@ -26,6 +26,8 @@ public class SushiBar {
     public static SynchronizedInteger takeawayOrders;
     public static SynchronizedInteger totalOrders;
 
+    public static SynchronizedInteger customersLeft;
+
 
     public static void main(String[] args) {
         log = new File(path + "log.txt");
@@ -35,6 +37,7 @@ public class SushiBar {
         totalOrders = new SynchronizedInteger(0);
         servedOrders = new SynchronizedInteger(0);
         takeawayOrders = new SynchronizedInteger(0);
+        customersLeft = new SynchronizedInteger(0);
 
         Clock clock = new Clock(duration);
 
@@ -43,11 +46,12 @@ public class SushiBar {
         Door door = new Door(waitingArea);
         Waitress[] waitresses = new Waitress[SushiBar.waitressCount];
 
-        door.run();
+        new Thread(door, "Thread-door").start();
+
 
         for(int i = 0; i < waitressCount; i++){
             waitresses[i] = new Waitress(waitingArea);
-            waitresses[i].run();
+            new Thread(waitresses[i], "Thread-waitress-" + i).start();
         }
 
     }
@@ -68,6 +72,13 @@ public class SushiBar {
 
     public static String genStr(String threadName, int customerID, String action){
         return String.format("%s: Customer #%d is now %s", threadName, customerID, action);
+    }
+
+    public static void printStats(){
+        write("STATISTICS:");
+        write("# Orders: " + totalOrders.get());
+        write("# Takeaway orders: " + takeawayOrders.get());
+        write("# Served orders: " + servedOrders.get());
     }
 
 }

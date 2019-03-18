@@ -18,6 +18,7 @@ public class Customer {
         this.ID = Customer.generateID();
         String logStr = SushiBar.genStr(Thread.currentThread().getName(), this.ID, "created");
         SushiBar.write(logStr);
+        SushiBar.customerCounter.increment();
     }
 
 
@@ -26,7 +27,7 @@ public class Customer {
      */
     public synchronized void order(){
         Random rnd = new Random();
-        int nOrders = rnd.nextInt(SushiBar.maxOrder);
+        int nOrders = Math.max(1,rnd.nextInt(SushiBar.maxOrder));
         int takeAwayOrders = rnd.nextInt(nOrders);
         int servedOrders = nOrders - takeAwayOrders;
 
@@ -42,6 +43,7 @@ public class Customer {
         SushiBar.totalOrders.add(nOrders);
 
         SushiBar.write(SushiBar.genStr(Thread.currentThread().getName(), this.getCustomerID(), "leaving"));
+        SushiBar.customersLeft.increment();
 
     }
 
